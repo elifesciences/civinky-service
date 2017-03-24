@@ -2,7 +2,7 @@
  * See README.md for documentation
  */
 
- var Promise = require('bluebird')
+var Promise = require('bluebird')
 var express = require('express')
 var app = express()
 var csslint = require('csslint').CSSLint;
@@ -83,7 +83,7 @@ app.get('/generate', function (req, res) {
   .then(function(html) { res.send(html) })
 });
 
-app.listen(3000)
+app.listen(process.env.CIVINKY_PORT || 3000)
 
 // Converting from Pug to Inky flavoured html (i.e. still has inky tags in at this stage)
 function pugToInky(source, data){
