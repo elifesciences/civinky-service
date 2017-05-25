@@ -15,10 +15,10 @@ var cheerio = require('cheerio')
 var inlineCss = require('inline-css')
 var fs = require("fs")
 var sass = require("node-sass")
+var bodyParser = require('body-parser');
 
 // Load the index.html that we'll use
-var indexHtml = fs.readFileSync('node_modules/foundation-emails-template/src/layouts/default.html')
-.toString().replace(/{{.*?}}/g, '').trim()
+var indexHtml = fs.readFileSync('node_modules/foundation-emails-template/src/layouts/default.html').toString().replace(/{{.*?}}/g, '').trim()
 
 // Load base CSS
 var baseCss = sass.renderSync({file: 'node_modules/foundation-emails/scss/foundation-emails.scss'}).css.toString()
@@ -30,32 +30,34 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
 // Validate query params
 app.use(function(req, res, next){
 
   //validate Pug
-  if (!('pug' in req.query)) {
-    req.query.pug = ''
+  if (!('pug' in req.body)) {
+    req.body.pug = ''
   }
-  pugErrors = validatePug(req.query.pug)
+  pugErrors = validatePug(req.body.pug)
   if(pugErrors){
     res.status(400).send("Errors in Pug:\n" + pugErrors)
   }
 
   //validate CSS
-  if (!('css' in req.query)) {
-    req.query.css = ''
+  if (!('css' in req.body)) {
+    req.body.css = ''
   }
-  cssErrors = validateCss(req.query.css)
+  cssErrors = validateCss(req.body.css)
   if(cssErrors.length){
     res.status(400).send("Errors in CSS:\n" + cssErrors.map(e => e.message).join("\n"))
   }
 
   //validate JSON
-  if (!('json' in req.query)) {
-    req.query.json = '{}'
+  if (!('json' in req.body)) {
+    req.body.json = '{}'
   }
-  jsonErrors = validateJson(req.query.json)
+  jsonErrors = validateJson(req.body.json)
   if(jsonErrors){
     res.status(400).send("Errors in JSON:\n" + jsonErrors)
   }
@@ -64,7 +66,7 @@ app.use(function(req, res, next){
 })
 
 
-app.all('/generate', function (req, res) {
+app.post('/generate', function (req, res) {
 
   // Load up the base html template
   let cheerioHtml = cheerio.load(indexHtml.toString())
@@ -73,10 +75,10 @@ app.all('/generate', function (req, res) {
   cheerioHtml('head link[href="css/app.css"]').remove()
 
   // Add the foundation and submitted CSS
-  cheerioHtml('head').append("<style>\n" + baseCss + req.query.css + "\n</style>")
+  cheerioHtml('head').append("<style>\n" + baseCss + req.body.css + "\n</style>")
 
   // Add the submitted html
-  submittedHtml = inkyToHtml(pugToInky(req.query.pug, JSON.parse(req.query.json)))
+  submittedHtml = inkyToHtml(pugToInky(req.body.pug, JSON.parse(req.body.json)))
   cheerioHtml('center').prepend(submittedHtml)
 
   // Inline the CSS and respond with the result
