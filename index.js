@@ -63,7 +63,7 @@ app.use(function(req, res, next){
   next()
 })
 
-app.get('/generate', function (req, res) {
+app.post('/generate', function (req, res) {
 
   // Load up the base html template
   let cheerioHtml = cheerio.load(indexHtml.toString())
