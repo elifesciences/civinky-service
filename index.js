@@ -68,22 +68,31 @@ app.use(function(req, res, next){
 
 app.post('/generate', function (req, res) {
 
-  // Load up the base html template
-  let cheerioHtml = cheerio.load(indexHtml.toString())
-
-  // Remove stuff that shouldn't be there
-  cheerioHtml('head link[href="css/app.css"]').remove()
-
-  // Add the foundation and submitted CSS
-  cheerioHtml('head').append("<style>\n" + baseCss + req.body.css + "\n</style>")
-
-  // Add the submitted html
   submittedHtml = inkyToHtml(pugToInky(req.body.pug, JSON.parse(req.body.json)))
-  cheerioHtml('center').prepend(submittedHtml)
 
-  // Inline the CSS and respond with the result
-  inlineCss(cheerioHtml.html(), {url:'/', removeStyleTags: false})
-  .then(function(html) { res.send(html) })
+
+  // snippet mode
+  if(req.body.snippet === 'true'){
+    // Add the foundation and submitted CSS and HTML
+    cheerioHtml = cheerio.load("<style>\n" + baseCss + req.body.css + "\n</style>" + submittedHtml)
+    // Inline the CSS and respond with the result
+    inlineCss(cheerioHtml.html(), {url:'/', removeStyleTags: true})
+    .then(function(html) { res.send(html) })
+
+  // full mode
+  }else{
+    // Load up the base html template
+    cheerioHtml = cheerio.load(indexHtml.toString())
+    // Remove stuff that shouldn't be there
+    cheerioHtml('head link[href="css/app.css"]').remove()
+    // Add the foundation and submitted CSS
+    cheerioHtml('head').append("<style>\n" + baseCss + req.body.css + "\n</style>")
+    cheerioHtml('center').prepend(submittedHtml)
+    // Inline the CSS and respond with the result
+    inlineCss(cheerioHtml.html(), {url:'/', removeStyleTags: false})
+    .then(function(html) { res.send(html) })
+  }
+
 });
 
 app.listen(process.env.CIVINKY_PORT || 3000)
