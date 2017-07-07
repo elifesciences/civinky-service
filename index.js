@@ -1,7 +1,3 @@
-/**
- * See README.md for documentation
- */
-
 var Promise = require('bluebird')
 var express = require('express')
 var app = express()
@@ -30,7 +26,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json());
 
 // Validate query params
 app.use(function(req, res, next){
@@ -72,7 +68,7 @@ app.post('/generate', function (req, res) {
 
 
   // snippet mode
-  if(req.body.snippet === 'true'){
+  if(req.body.snippet === true){
     // Add the foundation and submitted CSS and HTML
     cheerioHtml = cheerio.load("<style>\n" + baseCss + req.body.css + "\n</style>" + submittedHtml)
     // Inline the CSS and respond with the result
@@ -94,8 +90,8 @@ app.post('/generate', function (req, res) {
   }
 
 });
-
-app.listen(process.env.CIVINKY_PORT || 3000)
+//
+app.listen(process.env.CIVINKY_PORT || 30649)
 
 // Converting from Pug to Inky flavoured html (i.e. still has inky tags in at this stage)
 function pugToInky(source, data){

@@ -8,7 +8,7 @@ A web service that converts a Pug template, written with Inky tags to html ready
 2. `cd` to the downloaded directory and `npm install`
 3. Run the service with `node index.js`
 
-Civinky should be ready to generate HTML via a get request to http://localhost:3000/generate.
+Civinky should be ready to generate HTML via a get request to http://localhost:30649/generate.
 
 ### Specifying a port
 
@@ -26,7 +26,7 @@ PM2 is an 'advanced, production process manager for Node.js'. Run Civinky with P
 apps:
   - script: /var/www/civinky-service/index.js
     env:
-      CIVINKY_PORT: 3001 # optional, allows you to specific a port
+      CIVINKY_PORT: 30649 # optional, allows you to specific a port
 ```
 2. Start `pm2 start process.yml`
 
