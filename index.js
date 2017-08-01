@@ -91,7 +91,9 @@ app.post('/generate', function (req, res) {
 
 });
 //
-app.listen(process.env.CIVINKY_PORT || 30649)
+var server = app.listen(process.env.CIVINKY_PORT || 30649)
+
+module.exports = server;
 
 // Converting from Pug to Inky flavoured html (i.e. still has inky tags in at this stage)
 function pugToInky(source, data){
