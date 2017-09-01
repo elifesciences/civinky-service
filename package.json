@@ -1,6 +1,6 @@
 {
   "name": "civinky",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Civinky: a web service that converts a Pug template, writen with Inky tags to html ready for CiviMail",
   "repository": "3sd/civinky-service",
   "main": "index.js",
