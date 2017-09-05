@@ -31,9 +31,9 @@ describe('POST request to /generate', function(){
   })
 
   it("should turn json into html", function(done){
-    request.post({url: generateUrl, json: {pug: 'each thing in things\n  p #{thing}', json: JSON.stringify({things: ['foo', 'bar','baz']})}}, function(error, response, body) {
+    request.post({url: generateUrl, json: {pug: 'p Hello, #{planet}!', json: '{"planet": "World"}'}}, function(error, response, body) {
       var $ = cheerio.load(body)
-      expect($('p').text()).toBe('foobarbaz')
+      expect($('p').text()).toBe('Hello, World!')
       done()
     })
   })
