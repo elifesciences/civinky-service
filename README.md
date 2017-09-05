@@ -89,7 +89,9 @@ To see Civinky in action, visit https://civinky.demo.3sd.io/.
 
 A CiviCRM extension that implements a Civinky token: https://github.com/3sd/civicrm-elife-article-token
 
+## Testing
 
+Some simple tests are included and can be run from the download directory with `npm test`. Please ensure all tests are passing before submitting PRs and write new tests as appropriate.
 
 ## Credits
 
