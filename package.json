@@ -20,7 +20,7 @@
     "pug-lint": "^2.4.0"
   },
   "devDependencies": {
-    "jasmine": "^2.8.0",
+    "jasmine": "^2.8.0"
   },
   "scripts": { "test": "jasmine" },
   "author": "Michael McAndrew",
