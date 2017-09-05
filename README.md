@@ -91,7 +91,13 @@ A CiviCRM extension that implements a Civinky token: https://github.com/3sd/civi
 
 ## Testing
 
-Some simple tests are included and can be run from the download directory with `npm test`. Please ensure all tests are passing before submitting PRs and write new tests as appropriate.
+Some simple tests are included. To run the tests, first follow the installation instructions and then execute `npm test` from the project root.
+
+## Contributing
+
+PRs are very welcome. Feel free to open an issue to discuss any improvements first if that would be helpful.
+
+Please ensure all tests are passing and don't forget to write new tests as appropriate for any new functionality before submitting PRs.
 
 ## Credits
 
