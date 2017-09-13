@@ -23,7 +23,7 @@ You can run Civinky with PM2 - an 'advanced, production process manager for Node
 ```yaml
 # process.yml
 apps:
-  - script: /var/www/civinky-service/index.js
+  - script: /var/www/civinky-service/service.js
     env:
       CIVINKY_PORT: 30649 # optional, allows you to specific a port
 ```
@@ -88,6 +88,15 @@ You might also be interested in this extension that implements tokens based on C
 ## Civinky in the browser
 
 There is a browserified version of Civinky, which runs in the browser and can be found in `dist/civinky.bundle.js`. This version is used in the [CiviCRM Inky Compose](https://github.com/3sd/civicrm-inky-compose) extension.
+
+The browserified version exports a promise (CRM.civinky) that can be used as follows:
+
+```js
+CRM.civinky({pug: 'p hello world', css: "p {color:red}"})
+.then(result => console.log(result))
+```
+
+Test out Civinky in the browser with the `civinky-browserified.html` file.
 
 A gulp script to create the browserified version can be found in `gulpfile.js` and can be run with `gulp browserify`.
 Beware that it the browserified version weighs it at a fairly hefty 1.1MB - help on trimming off some fat welcome.

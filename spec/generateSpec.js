@@ -7,9 +7,9 @@ describe('POST request to /generate', function(){
   samplePug = 'p Hello, World!'
   sampleCss = 'p {color: red;}'
 
-  it("should return a status code 200", function(done) {
-    request.post({url: generateUrl}, function(error, response, body) {
-      expect(response.statusCode).toBe(200)
+  it("with no pug should return a status code 500", function(done) {
+    request.post({url: generateUrl, json: {pug: ''}}, function(error, response, body) {
+      expect(response.statusCode).toBe(500)
       done()
     })
   })
@@ -31,8 +31,9 @@ describe('POST request to /generate', function(){
   })
 
   it("should turn json into html", function(done){
-    request.post({url: generateUrl, json: {pug: 'p Hello, #{planet}!', json: '{"planet": "World"}'}}, function(error, response, body) {
+    request.post({url: generateUrl, json: {pug: 'p Hello, #{planet}!', json: {planet: "World"}}}, function(error, response, body) {
       var $ = cheerio.load(body)
+      // console.log($.html())
       expect($('p').text()).toBe('Hello, World!')
       done()
     })

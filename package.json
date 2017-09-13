@@ -1,28 +1,31 @@
 {
   "name": "civinky",
-  "version": "0.1.0",
-  "description": "Civinky: a web service that converts a Pug template, writen with Inky tags to html ready for CiviMail",
+  "version": "0.2.0",
+  "description": "Civinky: a web service to convert Pug with Inky into html ready for CiviMail",
   "repository": "3sd/civinky-service",
   "main": "index.js",
   "dependencies": {
-    "bluebird": "^3.4.7",
-    "body-parser": "^1.17.2",
-    "csslint": "^1.0.5",
-    "express": "^4.14.1",
-    "foundation-emails": "2.2.1",
+    "body-parser": "^1.18.1",
+    "express": "^4.15.4",
     "foundation-emails-template": "^1.0.0",
     "inky": "^1.3.7",
     "inline-css": "^2.2.2",
-    "jsonlint": "^1.6.2",
-    "mz": "^2.6.0",
-    "node-sass": "^4.5.0",
-    "pug": "^2.0.0-beta11",
-    "pug-lint": "^2.4.0"
+    "pug": "^2.0.0-rc.4"
   },
   "devDependencies": {
-    "jasmine": "^2.8.0"
+    "brfs": "^1.4.3",
+    "browserify": "^14.4.0",
+    "gulp": "^3.9.1",
+    "gulp-sourcemaps": "^2.6.1",
+    "gulp-uglify-es": "^0.1.3",
+    "gulp-util": "^3.0.8",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   },
-  "scripts": { "test": "jasmine" },
+  "scripts": {
+    "test": "jasmine",
+    "service": "node service.js"
+  },
   "author": "Michael McAndrew",
   "license": "MIT",
   "eslintConfig": {
