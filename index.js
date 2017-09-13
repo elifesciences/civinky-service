@@ -1,132 +1,56 @@
-var Promise = require('bluebird')
-var express = require('express')
-var app = express()
-var csslint = require('csslint').CSSLint;
-var jsonlint = require('jsonlint')
-var puglint = require('pug-lint')
-var pug = require('pug')
-var Inky = require('inky').Inky
-var i = new Inky({})
-var cheerio = require('cheerio')
-var inlineCss = require('inline-css')
-var fs = require("fs")
-var sass = require("node-sass")
-var bodyParser = require('body-parser');
 
-// Load the index.html that we'll use
-var indexHtml = fs.readFileSync('node_modules/foundation-emails-template/src/layouts/default.html').toString().replace(/{{.*?}}/g, '').trim()
+const Inky = require('inky/lib/inky.js');
+const i = new Inky();
+const Pug = require('pug');
+const cheerio = require('cheerio');
+const inlineCss = require('inline-css');
+const fs = require('fs');
 
-// Load base CSS
-var baseCss = sass.renderSync({file: 'node_modules/foundation-emails/scss/foundation-emails.scss'}).css.toString()
-
-// Allow Civinky to be consumed from anywhere (for now)
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
-app.use(bodyParser.json());
-
-// Validate query params
-app.use(function(req, res, next){
-
-  //validate Pug
-  if (!('pug' in req.body)) {
-    req.body.pug = ''
-  }
-  pugErrors = validatePug(req.body.pug)
-  if(pugErrors){
-    res.status(400).send("Errors in Pug:\n" + pugErrors)
-  }
-
-  //validate CSS
-  if (!('css' in req.body)) {
-    req.body.css = ''
-  }
-  cssErrors = validateCss(req.body.css)
-  if(cssErrors.length){
-    res.status(400).send("Errors in CSS:\n" + cssErrors.map(e => e.message).join("\n"))
-  }
-
-  //validate JSON
-  if (!('json' in req.body)) {
-    req.body.json = '{}'
-  }
-  jsonErrors = validateJson(req.body.json)
-  if(jsonErrors){
-    res.status(400).send("Errors in JSON:\n" + jsonErrors)
-  }
-
-  next()
-})
+const baseHtml = fs.readFileSync('node_modules/foundation-emails-template/src/layouts/default.html').toString().replace(/{{.*?}}/g, '').trim()
+const baseCss = fs.readFileSync('node_modules/foundation-emails/dist/foundation-emails.min.css')
 
 
-app.post('/generate', function (req, res) {
-
-  submittedHtml = inkyToHtml(pugToInky(req.body.pug, JSON.parse(req.body.json)))
-
-
-  // snippet mode
-  if(req.body.snippet === true){
-    // Add the foundation and submitted CSS and HTML
-    cheerioHtml = cheerio.load("<style>\n" + baseCss + req.body.css + "\n</style>" + submittedHtml)
-    // Inline the CSS and respond with the result
-    inlineCss(cheerioHtml.html(), {url:'/', removeStyleTags: true})
-    .then(function(html) { res.send(html) })
-
-  // full mode
-  }else{
-    // Load up the base html template
-    cheerioHtml = cheerio.load(indexHtml.toString())
-    // Remove stuff that shouldn't be there
-    cheerioHtml('head link[href="css/app.css"]').remove()
-    // Add the foundation and submitted CSS
-    cheerioHtml('head').append("<style>\n" + baseCss + req.body.css + "\n</style>")
-    cheerioHtml('center').prepend(submittedHtml)
-    // Inline the CSS and respond with the result
-    inlineCss(cheerioHtml.html(), {url:'/', removeStyleTags: false})
-    .then(function(html) { res.send(html) })
-  }
-
-});
-//
-app.listen(process.env.CIVINKY_PORT || 30649)
-
-// Converting from Pug to Inky flavoured html (i.e. still has inky tags in at this stage)
-function pugToInky(source, data){
-  compiled = pug.compile(source, {pretty: true})
-  return compiled(data)
+function pugToInky(pug, json){
+  return Pug.compile(pug, {pretty: true})(json)
 }
 
-// Replace Inky tags with html tags
 function inkyToHtml(inky){
-  cheerioHtml = cheerio.load(inky)
-  return i.releaseTheKraken(cheerioHtml)
+  return i.releaseTheKraken(inky)
 }
 
-// Validate CSS
-function validateCss(css){
-  result = csslint.verify(css);
-  return result.messages.filter(m => m.type == 'error')
+function wrapWithHtmlAndCss(html, css){
+  cheerioHtml = cheerio.load(baseHtml)
+  cheerioHtml('head link[href="css/app.css"]').remove()
+  cheerioHtml('center').prepend(html)
+  cheerioHtml('head').append("<style>\n" + css + "\n</style>")
+  return cheerioHtml.html()
 }
 
-// Validate Pug
-function validatePug(source){
-  try{
-    compiled = pug.compile(source)
-  }catch (e){
-    return e
+function prependCss(html, css){
+  return "<style>\n" + css + "\n</style>" + html
+}
+
+
+/**
+ * transform accepts the following params:
+ * params.pug: pug for the template
+ * params.css: css to add
+ * params.json: a json object for the pug
+ * params.snippet: boolean
+ * and returns html
+ */
+
+function transform(params){
+  if(!params.pug) throw('Error: Please include some pug')
+  inky = pugToInky(params.pug, params.json)
+  html = inkyToHtml(inky)
+  css = baseCss + params.css
+  if(!params.snippet){
+    html = wrapWithHtmlAndCss(html, css)
+  }else{
+    html = prependCss(html, css)
   }
-  return false
+  return inlineCss(html, {url:'/', removeStyleTags: params.snippet})
 }
 
-// Validate JSON
-function validateJson(json){
-  try{
-    result = jsonlint.parse(json);
-  }catch (e){
-    return e
-  }
-  return false
-}
+module.exports = transform
