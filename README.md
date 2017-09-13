@@ -1,26 +1,25 @@
 # Civinky: Pug and Inky for CiviMail
 
-A web service that converts a Pug template, written with Inky tags to html ready for CiviMail.
+A web service that converts a Pug template, written with Inky tags to html ready for CiviMail. You may also be interested in the [CiviCRM Inky Compose](https://github.com/3sd/civicrm-inky-compose) extension that allows you to compose with Inky using the CiviMail's UI
 
 ## Installation
 
 1. Download Civinky from https://github.com/3sd/civinky-service.
 2. `cd` to the downloaded directory and `npm install`
-3. Run the service with `node index.js`
+3. Run the service with `npm run service`
 
-Civinky should be ready to generate HTML via a get request to http://localhost:30649/generate.
+Civinky is now ready to generate HTML in response to post requests on http://localhost:30649/generate.
 
 ### Specifying a port
 
-You can specify a specific port with
+You can specify a specific port with `CIVINKY_PORT=N npm run service` where N is the number of the port you want to run it on.
 
-`CIVINKY_PORT=N node index.js`
+### Running Civinky with PM2
 
-### Using PM2
+You can run Civinky with PM2 - an 'advanced, production process manager for Node.js' - as follows:
 
-PM2 is an 'advanced, production process manager for Node.js'. Run Civinky with PM2 as follows:
-
-1. Create a process.yml file.
+1. Download and install pm2
+2. Create a process.yml file.
 ```yaml
 # process.yml
 apps:
@@ -28,13 +27,12 @@ apps:
     env:
       CIVINKY_PORT: 30649 # optional, allows you to specific a port
 ```
-2. Start `pm2 start process.yml`
+3. Start `pm2 start process.yml`
 
 ## Usage
 
-1. Post a request to http://localhost:3000/generate with x-www-form-urlencoded params (see below)
-
-2. You will receive a response containing email friendly HTML.
+1. Make a post requests to http://localhost:3000/generate. Include your params as json in the request body (see below for details).
+2. You will recive response containing email friendly HTML.
 
 Hint: tools like [Postman](https://www.getpostman.com/) are useful for experimenting with requests.
 
@@ -56,8 +54,7 @@ Some tips on using Pug and inky to generate email friendly HTML for CiviMail:
 * Use Inky tags rather than html tags when available to ensure that the generated HTML is email friendly.
 * Insert values from the json object, use the following Pug syntax: `#{key}`
 * Add smarty tokens as normal, e.g. `{contact.first_name}`.
-* The entirety of Pug's syntax (control flow, etc.) is available for your use.
-
+* Remember that the entirety of Pug's syntax (control flow, etc.) is available for your use.
 
 #### css
 
@@ -67,7 +64,6 @@ h1{color:red}
 ```
 
 This CSS will be appended to Foundation's base CSS and inlined into the html.
-
 
 #### json
 
@@ -81,17 +77,24 @@ This will be available for use in the Pug.
 
 *Boolean*, defaults to false.
 
-By default, Civinky surrounds the Pug specified above with an opening !DOCTYPE tag, a HEAD tag, and some enclosing HTML before the CSS is in-lined. Setting snippet to true stops this from happening. which is useful, for example, when using Civinky to generate HTML for a CiviMail token.
+By default, Civinky wraps the Pug with appropriate HTML to ensure proper rendering across clients. Setting snippet to true will prevent the output being wrapped, which is useful, for example, if you want to use Civinky to generate HTML for a CiviMail token that will be included as part of another Civinky based email.
 
-### Examples
+## Demo
 
 To see Civinky in action, visit https://civinky.demo.3sd.io/.
 
-A CiviCRM extension that implements a Civinky token: https://github.com/3sd/civicrm-elife-article-token
+You might also be interested in this extension that implements tokens based on Civinky: https://github.com/elifesciences/civicrm-elife-token
 
-## Testing
+## Civinky in the browser
 
-Some simple tests are included. To run the tests, first follow the installation instructions and then execute `npm test` from the project root.
+There is a browserified version of Civinky, which runs in the browser and can be found in `dist/civinky.bundle.js`. This version is used in the [CiviCRM Inky Compose](https://github.com/3sd/civicrm-inky-compose) extension.
+
+A gulp script to create the browserified version can be found in `gulpfile.js` and can be run with `gulp browserify`.
+Beware that it the browserified version weighs it at a fairly hefty 1.1MB - help on trimming off some fat welcome.
+
+## Tests
+
+The Civinky service has a simple suite of tests that also serve to test the library. Ensure that the service is running as outlined above and then run `npm test` to execute the tests.
 
 ## Contributing
 
