@@ -1,6 +1,10 @@
 # Civinky: Pug and Inky for CiviMail
 
-A web service that converts a Pug template, written with Inky tags to html ready for CiviMail. You may also be interested in the [CiviCRM Inky Compose](https://github.com/3sd/civicrm-inky-compose) extension that allows you to compose with Inky using the CiviMail's UI
+Convert Pug with Inky into html ready for CiviMail.
+
+This repository contains the Civinky library; a simple web service based on this library; and a browserified version of the library.
+
+You may also be interested in the [CiviCRM Inky Compose](https://github.com/3sd/civicrm-inky-compose) extension that allows you to compose with Inky using the CiviMail's UI.
 
 ## Installation
 
