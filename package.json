@@ -1,7 +1,7 @@
 {
   "name": "civinky",
   "version": "0.2.1",
-  "description": "Civinky: a web service to convert Pug with Inky into html ready for CiviMail",
+  "description": "a web service that converts Pug with Inky into html ready for CiviMail",
   "repository": "3sd/civinky-service",
   "main": "index.js",
   "dependencies": {
