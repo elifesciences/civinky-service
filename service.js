@@ -1,8 +1,6 @@
-const Promise = require('bluebird')
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
-const fs = require("fs")
 const civinky = require(".")
 
 
