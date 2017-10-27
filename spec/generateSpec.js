@@ -1,8 +1,12 @@
 var request = require("request")
 var cheerio = require("cheerio")
+var expect = require("expect")
 var generateUrl = "http://localhost:" + (process.env.CIVINKY_PORT || 30649) + "/generate"
+var server = require('../service');
 
 describe('POST request to /generate', function(){
+  var server;
+
 
   samplePug = 'p Hello, World!'
   sampleCss = 'p {color: red;}'
