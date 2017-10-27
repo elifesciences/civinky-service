@@ -24,4 +24,7 @@ app.post('/generate', function (req, res) {
 
 });
 //
-app.listen(process.env.CIVINKY_PORT || 30649)
+const port = process.env.CIVINKY_PORT || 30649
+app.listen(port, function(){
+  console.log('Civinky listing on ' + port + '...')
+})
